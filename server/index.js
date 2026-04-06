@@ -1,14 +1,34 @@
+require("dotenv").config();
+
 const express = require("express");
+const cors = require("cors");
+const mongoose = require("mongoose");
+
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 
-app.get("/", (req, res) =>
-  {
-  res.send("API Running...");
-  });
+const userRoutes = require("./routes/userRoutes");
+app.use("/api/users", userRoutes);
 
-app.listen(5000, () =>
-  {
+const courseRoutes = require("./routes/courseRoutes");
+app.use("/api/courses", courseRoutes);
+
+const lessonRoutes = require("./routes/lessonRoutes");
+app.use("/api/lessons", lessonRoutes);
+
+const progressRoutes = require("./routes/progressRoutes");
+app.use("/api/progress", progressRoutes);
+
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("DB Connected ✅"))
+  .catch(err => console.log(err));
+
+app.get("/", (req, res) => {
+  res.send("API Running...");
+});
+
+app.listen(5000, () => {
   console.log("Server running on port 5000");
-  });
+});
